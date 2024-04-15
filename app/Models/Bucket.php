@@ -10,8 +10,8 @@ class Bucket extends Model
     use HasFactory;
     protected $fillable = ['name', 'capacity', 'remaining_space', 'user_id'];
 
-    public function balls()
+    public function ball()
     {
-        return $this->belongsToMany(Ball::class)->withPivot('quantity');
+        return $this->belongsTo(Ball::class);
     }
 }

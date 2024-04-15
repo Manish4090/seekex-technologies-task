@@ -23,6 +23,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::post('/buckets/store', [App\Http\Controllers\BucketController::class, 'store'])->name('buckets.store')->middleware('auth');
 Route::post('/balls/store', [App\Http\Controllers\BallController::class, 'store'])->name('balls.store')->middleware('auth');
 Route::post('/bucket-suggestions', [App\Http\Controllers\BucketController::class, 'allocateBalls'])->name('bucket.suggestions')->middleware('auth');
-
+Route::post('/release-spaces-all-buckets', [App\Http\Controllers\BucketController::class, 'releaseSpacesAllBuckets'])->name('release-spaces-all-buckets')->middleware('auth');
 
 

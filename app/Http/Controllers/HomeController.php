@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Bucket, Ball};
+use App\Models\{Bucket, Ball, BucketBallCount};
+use DB;
+use Auth;
+use App\Traits\BasketBallResultTraits;
 
 class HomeController extends Controller
 {
+    use BasketBallResultTraits;
     /**
      * Create a new controller instance.
      *
@@ -24,9 +28,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $bucket = Bucket::get();
+        $buckets = Bucket::get();
+        $bucketsCount = Bucket::count();
         $balls = Ball::get();
-        
-        return view('home', compact('bucket', 'balls'));
+        $ballCount = Ball::count();
+        $buckets = Bucket::where('user_id', auth()->id())->get();
+        $allBucketsFull = $buckets->every(function ($bucket) {
+            return $bucket->remaining_space == 0;
+        });
+
+        $finalBacketResultOutput = $this->getResultOfBucketBalls();
+
+        return view('home', compact('buckets', 'balls', 'finalBacketResultOutput', 'ballCount', 'allBucketsFull','bucketsCount'));
     }
 }

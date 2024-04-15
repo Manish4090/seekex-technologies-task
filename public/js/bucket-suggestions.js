@@ -1,23 +1,47 @@
 $(document).ready(function() {
+    //$('#releaseSpacesAllBuckets').removeClass('d-block').addClass('d-none');
     $('#bucketSuggestionsForm').submit(function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        
-        var formData = $(this).serialize(); // Serialize form data
-        
+        e.preventDefault();
+        var formData = $(this).serialize();
         $.ajax({
             url: $(this).attr('action'),
             type: 'POST',
             data: formData,
             success: function(response) {
-                // Handle success response
-                console.log(response);
-                // Here you can update the UI or perform further actions based on the response
+                toastr.success(response.message);
+                $('#bucketSuggestionsForm')[0].reset();
+                $('#bucketsArea').html(response.finalBacketHtml);
+                $('#backetsBallResult').html(response.backetsBallResult);
+                if(response.empty_space == true){
+                    $('#releaseSpacesAllBuckets').removeClass('d-none').addClass('d-block');
+                    $('#bucketSuggestionsForm').removeClass('d-block').addClass('d-none');
+                }else{
+                    $('#releaseSpacesAllBuckets').removeClass('d-block').addClass('d-none');
+                    $('#bucketSuggestionsForm').removeClass('d-none').addClass('d-block');
+                }
             },
             error: function(xhr, status, error) {
-                // Handle error response
                 console.error(error);
-                // For example, you can display an error message
-                alert('Failed to get bucket suggestions. Please try again.');
+            }
+        });
+    });
+    $('#releaseSpacesAllBuckets').click(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).data('action'), 
+            type: 'POST',
+            success: function(response) {
+                toastr.success(response.message);
+                if(response.empty_space == true){
+                    $('#releaseSpacesAllBuckets').removeClass('d-none').addClass('d-block');
+                    $('#bucketSuggestionsForm').removeClass('d-block').addClass('d-none');
+                }else{
+                    $('#releaseSpacesAllBuckets').removeClass('d-block').addClass('d-none');
+                    $('#bucketSuggestionsForm').removeClass('d-none').addClass('d-block');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
             }
         });
     });

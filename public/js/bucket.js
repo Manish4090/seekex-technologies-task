@@ -1,37 +1,41 @@
-// Assume you have jQuery included in your project
 $(document).ready(function() {
-    // Handle form submission
-    $('form').submit(function(e) {
-        e.preventDefault(); // Prevent default form submission
-        
-        // Perform AJAX request to submit form data
+    $('#create-bucket-form').submit(function(e) {
+        e.preventDefault();
         $.ajax({
             url: $(this).attr('action'),
             type: $(this).attr('method'),
             data: $(this).serialize(),
             dataType: 'json',
             success: function(response) {
-                // Build HTML for the new bucket
-                var newBucketHtml = `
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">${response.bucket_name}</h5>
-                                <p class="card-text">Capacity: ${response.capacity} cubic inches</p>
-                                <p class="card-text">Balls: ${response.ball_count}</p>
+
+                if (response.bucket_count >= 3) {
+                    $('#createBucket').text('You can only create 3 buckets').prop('disabled', true);
+                    $('#create-bucket-form')[0].reset();
+                } else {
+                   
+                    $('#createBucket').text('Create Ball').prop('disabled', false);
+                   
+                    if(response.ball_count > 0 && response.bucket_count > 0){
+                        $('#bucketSuggestionsWithBall').text('Get Bucket Suggestions').prop('disabled', false);
+                    }
+                    
+                }
+                 toastr.success(response.success);
+                 var newBucketHtml = `
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${response.bucket_name}</h5>
+                                    <p class="card-text">Capacity: ${response.capacity} cubic inches</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                
-                // Append the new bucket HTML to the container
-                $('#bucketContainer').html(newBucketHtml);
-                
-                // Clear form fields
-                $('form')[0].reset();
+                    `;
+                    $('#bucketsArea').append(newBucketHtml);
+                    
+                    $('#create-bucket-form')[0].reset();
             },
             error: function(xhr, status, error) {
-                // Handle error
                 console.error(error);
             }
         });
